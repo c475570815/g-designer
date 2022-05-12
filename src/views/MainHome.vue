@@ -16,10 +16,11 @@
 
 import mainHomeHead from "@/components/main-home/main-home-head";
 import mainHomeAside from "@/components/main-home/main-home-aside";
+import mainHomeMain from "@/components/main-home/main-home-main";
 
 export default {
   name: 'HomeView',
-  components: {mainHomeHead, mainHomeAside}
+  components: {mainHomeHead, mainHomeAside,mainHomeMain}
 }
 </script>
 

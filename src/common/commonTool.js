@@ -1,6 +1,7 @@
+import {toRaw} from "vue";
+
+
 const isEmpty = (checkObject) => {
-    console.log(checkObject)
-    debugger
     if (checkObject === undefined
         || checkObject === null) {
         return true

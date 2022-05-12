@@ -25,12 +25,4 @@ app.mount('#app')
 //全局变量
 app.config.globalProperties.$common = commonTool
 app.config.globalProperties.$axios = axios;
-
-//配置文件读取
-$axios.get('static/toolDetail.json').then((res) => {
-    let apiUrl = res.data.apiUrl;
-    console.log('apiUrl ' + apiUrl);
-    axios.defaults.baseURL = apiUrl;
-}).catch(err => {
-    console.log("apiUrl " + err);
-})
+app.config.globalProperties.$store = store;
