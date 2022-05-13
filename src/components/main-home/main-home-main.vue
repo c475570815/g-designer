@@ -1,35 +1,30 @@
 <template>
-  <div>
-    <draggable class="drawing-board" :list="drawingList" :animation="340" :group="$store.getters.getToolGroupName">
-      <!--      <draggable-item-->
-      <!--          v-for="(item, index) in drawingList"-->
-      <!--          :key="item.renderKey"-->
-      <!--          :drawing-list="drawingList"-->
-      <!--          :current-item="item"-->
-      <!--          :index="index"-->
-      <!--          :active-id="activeId"-->
-      <!--          :form-conf="formConf"-->
-      <!--          @activeItem="activeFormItem"-->
-      <!--          @copyItem="drawingItemCopy"-->
-      <!--          @deleteItem="drawingItemDelete"-->
-      <!--      />-->
-    </draggable>
-    <div v-show="!drawingList.length" class="empty-info">
-      从左侧拖入或点选组件进行表单设计
-    </div>
-  </div>
+  <draggable class="drawing-board"
+             v-model="toolList"
+             item-key="name"
+             :group="$store.getters.getToolGroupName">
+    <template #item="{element,index}">
+      <component-show
+          :tool-data="element"
+          :index="index"/>
+    </template>
+  </draggable>
+<!--  <div v-show="$common.isEmpty(toolList)" class="empty-info">-->
+<!--    从左侧拖入或点选组件进行表单设计-->
+<!--  </div>-->
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+import componentShow from "@/components/component-show/component-show";
 
 export default {
   name: "main-home-main",
   props: {},
-  components: {draggable},
+  components: {componentShow, draggable},
   data() {
     return {
-      drawingList: []
+      toolList: this.$store.getters.getShowToolArr
     }
   },
   methods: {},

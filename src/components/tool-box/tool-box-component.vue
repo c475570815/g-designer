@@ -1,14 +1,12 @@
 <template>
-  <div >
-    <el-button type="primary" size="small" :icon="$common.isEmpty(toolData.iconName)?'folder':toolData.iconName">
+    <el-button  type="primary" size="small" :icon="$common.isEmpty(toolData.iconName)?'folder':toolData.iconName">
       {{ toolData.name }}
     </el-button>
-  </div>
 </template>
 
 <script>
 export default {
-  name: "ui-component-tool-show",
+  name: "tool-box-component",
   props: {
     toolData: {type: Object, require: true}
   },

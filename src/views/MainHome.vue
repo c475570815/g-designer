@@ -7,7 +7,9 @@
       <el-aside width="200px">
         <mainHomeAside/>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <mainHomeMain/>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -20,7 +22,7 @@ import mainHomeMain from "@/components/main-home/main-home-main";
 
 export default {
   name: 'HomeView',
-  components: {mainHomeHead, mainHomeAside,mainHomeMain}
+  components: {mainHomeHead, mainHomeAside, mainHomeMain}
 }
 </script>
 

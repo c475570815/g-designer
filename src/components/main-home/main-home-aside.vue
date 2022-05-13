@@ -1,16 +1,16 @@
 <template>
   <div>
-    <uiComponentToolBox/>
+    <toolBox/>
   </div>
 </template>
 
 <script>
-import uiComponentToolBox from "@/components/ui-components/ui-component-tool-box";
+import toolBox from "@/components/tool-box/tool-box";
 
 export default {
   name: "main-home-aside",
   props: {},
-  components: {uiComponentToolBox},
+  components: {toolBox},
   data() {
     return {}
   },
