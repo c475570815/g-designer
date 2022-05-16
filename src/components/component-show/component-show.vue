@@ -1,7 +1,7 @@
 <script>
 
 
-import {render, createElementVNode} from "vue";
+import {render, h, resolveComponent} from "vue";
 
 export default {
   name: "component-show",
@@ -11,17 +11,20 @@ export default {
   components: {
     render
   },
-  render() {
+  render(createElement, context) {
     let tagData = this.$common.deepClone(this.toolData.code);
-    let componentTag=this.$store.getters.getComponentTagName;
+    let componentTag = this.$store.getters.getComponentTagName;
+    let defaultContentTag = this.$store.getters.getDefaultContent;
+    let outPutKeyArr = [componentTag, defaultContentTag]
     let keys = Object.keys(tagData);
     let param = {}
     for (let i = 0; i < keys.length; i++) {
-      if (this.$store.getters.getComponentTagName !== keys[i]) {
+      if (outPutKeyArr.indexOf(keys[i]) <= 0) {
         param[keys[i]] = tagData[keys[i]];
       }
     }
-    return createElementVNode(tagData.componentTag, param, [])
+    let defaultContent = this.$common.isEmpty(tagData[defaultContentTag]) ? "" : tagData[defaultContentTag]
+    return h(resolveComponent(tagData[componentTag]), param, [defaultContent])
   }
 }
 </script>

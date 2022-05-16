@@ -9,8 +9,8 @@ export default [
                 "iconName": "folder",
                 "code": {
                     "componentTag": "el-input",
+                    "type": "password",
                     "placeholder": "请输入文本",
-                    "type": "primary",
                 }
             }
         ],
@@ -31,7 +31,8 @@ export default [
                 "iconName": "folder",
                 "code": {
                     "componentTag": "el-button",
-                    "type": "password"
+                    "type": "primary",
+                    "defaultContent":"按钮"
                 }
             }
         ]

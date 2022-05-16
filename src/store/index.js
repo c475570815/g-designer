@@ -5,7 +5,10 @@ import toolDetail from "@/common/toolDetail";
 export default createStore({
     // 共同维护的一个状态，state里面可以是很多个全局状态
     state: {
-        componentTagName: "componentTag",
+        componentConstValue: {
+            tagName: "componentTag",
+            defaultContent: "defaultContent"
+        },
         configToolData: toolDetail,
         toolGroupName: 'toolGroup',
         showToolArr: []
@@ -22,7 +25,10 @@ export default createStore({
             return state.showToolArr;
         },
         getComponentTagName(state) {
-            return state.componentTagName;
+            return state.componentConstValue.tagName;
+        },
+        getDefaultContent(state) {
+            return state.componentConstValue.defaultContent;
         }
 
     },
