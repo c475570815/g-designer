@@ -5,8 +5,13 @@ import {render, h, resolveComponent} from "vue";
 
 export default {
   name: "component-show",
+  data() {
+    return {
+
+    }
+  },
   props: {
-    toolData: {type: Object, require: true}
+    toolData: {type: Object, require: true},
   },
   components: {
     render
@@ -19,12 +24,13 @@ export default {
     let keys = Object.keys(tagData);
     let param = {}
     for (let i = 0; i < keys.length; i++) {
-      if (outPutKeyArr.indexOf(keys[i]) <= 0) {
+      if (outPutKeyArr.indexOf(keys[i]) < 0) {
         param[keys[i]] = tagData[keys[i]];
       }
     }
-    let defaultContent = this.$common.isEmpty(tagData[defaultContentTag]) ? "" : tagData[defaultContentTag]
-    return h(resolveComponent(tagData[componentTag]), param, [defaultContent])
+    let defaultContent = this.$common.isEmpty(tagData[defaultContentTag]) ? "11" : tagData[defaultContentTag]
+    param.class = 'empty-dispaly';
+    return h(resolveComponent(tagData[componentTag]), param,[])
   }
 }
 </script>

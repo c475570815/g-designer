@@ -1,7 +1,7 @@
 export default [
     {
         "id": "1",
-        "typeName": "输入型组件",
+        "typeName": "表单组件",
         "toolArr": [
             {
                 "id": "1-1",
@@ -11,6 +11,16 @@ export default [
                     "componentTag": "el-input",
                     "type": "password",
                     "placeholder": "请输入文本",
+                }
+            },
+            {
+                "id": "1-2",
+                "name": "按钮",
+                "iconName": "folder",
+                "code": {
+                    "componentTag": "el-button",
+                    "type": "primary",
+                    "defaultContent":"按钮"
                 }
             }
         ],
@@ -23,18 +33,19 @@ export default [
     },
     {
         "id": "3",
-        "typeName": "布局型组件",
+        "typeName": "布局组件",
         "toolArr": [
             {
                 "id": "3-1",
-                "name": "按钮",
+                "name": "行布局",
                 "iconName": "folder",
+                "displayType":0,
                 "code": {
-                    "componentTag": "el-button",
-                    "type": "primary",
-                    "defaultContent":"按钮"
+                    "componentTag": "el-row",
+                    //行间距
+                    "gutter": 0,
                 }
-            }
+            },
         ]
     }
 ]

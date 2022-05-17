@@ -4,7 +4,7 @@
       <mainHomeHead/>
     </el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="230px">
         <mainHomeAside/>
       </el-aside>
       <el-main>

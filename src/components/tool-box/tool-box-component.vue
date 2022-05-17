@@ -1,5 +1,5 @@
 <template>
-    <el-button  type="primary" size="small" :icon="$common.isEmpty(toolData.iconName)?'folder':toolData.iconName">
+    <el-button   type="primary" size="small" :icon="$common.isEmpty(toolData.iconName)?'folder':toolData.iconName">
       {{ toolData.name }}
     </el-button>
 </template>
