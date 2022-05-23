@@ -18,7 +18,12 @@ const isNotEmpty = (checkObject) => {
     return !isEmpty(checkObject);
 }
 
-const  deepClone=(obj)=> {
+/**
+ * 对象深拷贝
+ * @param obj
+ * @returns {*[]|*|RegExp|Date}
+ */
+const deepClone = (obj) => {
     const _toString = Object.prototype.toString
 
     // null, undefined, non-object, function
@@ -39,9 +44,15 @@ const  deepClone=(obj)=> {
     // RegExp
     if (_toString.call(obj) === '[object RegExp]') {
         const flags = []
-        if (obj.global) { flags.push('g') }
-        if (obj.multiline) { flags.push('m') }
-        if (obj.ignoreCase) { flags.push('i') }
+        if (obj.global) {
+            flags.push('g')
+        }
+        if (obj.multiline) {
+            flags.push('m')
+        }
+        if (obj.ignoreCase) {
+            flags.push('i')
+        }
 
         return new RegExp(obj.source, flags.join(''))
     }
@@ -55,8 +66,31 @@ const  deepClone=(obj)=> {
     return result
 }
 
+/**
+ * 生成guid
+ * @returns {string}
+ */
+const getGuid = () => {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+};
+/**
+ * 通过配置的组件数据判断是否是 布局组件
+ * @param item
+ * @returns {boolean}  true表示是 布局组件
+ */
+const isDisplayGroup = (item) => {
+    return  item.type === 'display';
+}
+
+
 export default {
     isEmpty,
     isNotEmpty,
-    deepClone
+    deepClone,
+    getGuid,
+    isDisplayGroup
 }

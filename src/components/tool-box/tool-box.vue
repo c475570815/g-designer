@@ -1,19 +1,28 @@
 <template>
   <div v-for="(item,index) in  toolDataDetail" :key="index">
     <el-card
+        class="toolbox-card box-card"
         v-if="$common.isNotEmpty(item)&&$common.isNotEmpty(item.toolArr)"
     >
-      <span class="components-title">{{ item.typeName }}</span>
+      <template #header>
+        <div class="card-header">
+          <span>{{ item.typeName }}</span>
+        </div>
+      </template>
+
+
       <draggable
           v-model="item.toolArr"
           animation="300"
-          :group="{ name: isDisplayGroup(item)?$store.getters.displayComponentGroupName:$store.getters.useComponentGroupName, pull: 'clone', put: false }"
+          :group="{ name: item.id==='3'?$store.getters.displayComponentGroupName:$store.getters.useComponentGroupName, pull: 'clone', put: false }"
           :clone="cloneComponent"
           :sort="false"
           @end="onEnd"
           item-key="name">
         <template #item="{element,index}">
+          <el-col :span="12" :style="{margin:'5px'}">
           <toolComponent :tool-data="element"/>
+          </el-col>
         </template>
       </draggable>
     </el-card>
@@ -25,6 +34,7 @@
 import toolComponent from "@/components/tool-box/tool-box-component";
 import draggable from 'vuedraggable'
 import {toRaw} from "vue";
+import bus from "@/bus";
 
 export default {
   name: "tool-box",
@@ -42,13 +52,14 @@ export default {
     },
     onEnd(obj) {
       if (obj.from !== obj.to) {
-        this.$store.commit('addShowTool', this.activeToolData);
+        //添加布局组件
+        if (this.$common.isDisplayGroup(this.activeToolData)) {
+          this.$store.commit('addShowTool', this.activeToolData);
+        } else {
+          bus.$emit(`addComponent${obj.to.id}`, this.activeToolData);
+        }
       }
     },
-    isDisplayGroup(item) {
-      return item.id === '3';
-    }
-
   },
   mounted() {
   },
@@ -59,4 +70,8 @@ export default {
 
 <style scoped>
 
+.toolbox-card{
+  margin: 10px;
+
+}
 </style>

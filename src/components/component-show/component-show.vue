@@ -28,9 +28,9 @@ export default {
         param[keys[i]] = tagData[keys[i]];
       }
     }
-    let defaultContent = this.$common.isEmpty(tagData[defaultContentTag]) ? "11" : tagData[defaultContentTag]
+    let defaultContent = this.$common.isEmpty(tagData[defaultContentTag]) ? "" : tagData[defaultContentTag]
     param.class = 'empty-dispaly';
-    return h(resolveComponent(tagData[componentTag]), param,[])
+    return h(resolveComponent(tagData[componentTag]), param, { default: () => defaultContent })
   }
 }
 </script>
