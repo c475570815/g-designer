@@ -16,6 +16,16 @@ export default [
             },
             {
                 "id": "1-2",
+                "name": "label",
+                "type": "use",
+                "iconName": "folder",
+                "code": {
+                    "componentTag": "span",
+                    "defaultContent":"标签"
+                }
+            },
+            {
+                "id": "1-3",
                 "name": "按钮",
                 "type": "use",
                 "iconName": "folder",
@@ -26,7 +36,7 @@ export default [
                 }
             },
             {
-                "id": "1-3",
+                "id": "1-4",
                 "name": "时间选择器",
                 "type": "use",
                 "iconName": "folder",

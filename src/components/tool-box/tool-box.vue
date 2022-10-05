@@ -16,12 +16,14 @@
           animation="300"
           :group="{ name: item.id==='3'?$store.getters.displayComponentGroupName:$store.getters.useComponentGroupName, pull: 'clone', put: false }"
           :clone="cloneComponent"
+          :force-fallback=true
+          ghost-class="ghost-class"
           :sort="false"
           @end="onEnd"
           item-key="name">
         <template #item="{element,index}">
           <el-col :span="12" :style="{margin:'5px'}">
-          <toolComponent :tool-data="element"/>
+            <toolComponent :tool-data="element"/>
           </el-col>
         </template>
       </draggable>
@@ -56,7 +58,11 @@ export default {
         if (this.$common.isDisplayGroup(this.activeToolData)) {
           this.$store.commit('addShowTool', this.activeToolData);
         } else {
-          bus.$emit(`addComponent${obj.to.id}`, this.activeToolData);
+
+          bus.$emit(`addComponent${obj.to.id}`, {
+            "componentData": this.activeToolData,
+            "displayIndex": obj.newDraggableIndex
+          });
         }
       }
     },
@@ -70,8 +76,11 @@ export default {
 
 <style scoped>
 
-.toolbox-card{
+.toolbox-card {
   margin: 10px;
 
+.ghost-class {
+  background-color: red !important;
+}
 }
 </style>

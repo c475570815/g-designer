@@ -1,5 +1,5 @@
 <template>
-  <el-row align="middle" >
+  <el-row align="middle" class="row-display" :gutter="20">
     <draggable
         v-if="$common.isNotEmpty(dataArr)"
         :id="refId"
@@ -10,7 +10,7 @@
         item-key="id"
     >
       <template #item="{element,index}">
-        <el-col :span="element.span" style="margin: 5px">
+        <el-col :span="element.span">
           <ComponentShow :toolData="element.componentData" :index="index"/>
         </el-col>
       </template>
@@ -27,15 +27,10 @@
     >
       <template #item="{element,index}">
         <div :span="element.span">
-          <span>{{element.text}}</span>
+          <span>{{ element.text }}</span>
         </div>
       </template>
     </draggable>
-
-
-    <!--    <el-col :span="24" v-if="$common.isEmpty(dataArr)">-->
-    <!--      <el-empty description="拖动控件到这里呢 亲" />-->
-    <!--    </el-col>-->
   </el-row>
 </template>
 
@@ -59,17 +54,24 @@ export default {
       refId: this.$common.getGuid(),
       draggableStyle: {},
       emptyArr: [{text: "拖动控件到这里呢 亲"}],
-      emptyStyle:{}
+      emptyStyle: {}
     }
   },
-  methods: {},
+  methods: {
+    autoDisplay() {
+      let spanCount = 24 / this.dataArr.length;
+      for (let data of this.dataArr) {
+        data.span = spanCount;
+      }
+    }
+  },
   mounted() {
     this.draggableStyle = {
       height: this.$el.style.height,
       width: '100%',
       display: 'contents'
     }
-    this.emptyStyle={
+    this.emptyStyle = {
       height: this.$el.style.height,
       width: '100%',
       'text-align': 'center'
@@ -77,18 +79,23 @@ export default {
   },
   created() {
     //发布拖拽后的相应事件
-    bus.$on(`addComponent${this.refId}`, (componentData) => {
-      this.dataArr.push(
-          {
-            id: this.$common.getGuid,
-            span: this.defaultSpan,
-            componentData: componentData
-          });
+    bus.$off(`addComponent${this.refId}`)
+    bus.$on(`addComponent${this.refId}`, ({componentData, displayIndex}) => {
+
+      this.dataArr.splice(displayIndex, 0, {
+        id: this.$common.getGuid,
+        span: this.defaultSpan,
+        componentData: componentData
+      });
     })
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.row-display {
+  width: 100%;
 
+
+}
 </style>

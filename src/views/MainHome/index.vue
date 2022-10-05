@@ -16,9 +16,9 @@
 
 <script>
 
-import mainHomeHead from "@/components/main-home/main-home-head";
-import mainHomeAside from "@/components/main-home/main-home-aside";
-import mainHomeMain from "@/components/main-home/main-home-main";
+import mainHomeHead from "@/views/MainHome/main-home-head";
+import mainHomeAside from "@/views/MainHome/main-home-aside";
+import mainHomeMain from "@/views/MainHome/main-home-main";
 
 export default {
   name: 'HomeView',
