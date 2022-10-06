@@ -10,6 +10,9 @@
       <el-main>
         <mainHomeMain/>
       </el-main>
+<!--      <div style="width: 300px">-->
+<!--        <ComponentDesign :component-id=""/>-->
+<!--      </div>-->
     </el-container>
   </el-container>
 </template>
@@ -19,10 +22,11 @@
 import mainHomeHead from "@/views/MainHome/main-home-head";
 import mainHomeAside from "@/views/MainHome/main-home-aside";
 import mainHomeMain from "@/views/MainHome/main-home-main";
+import ComponentDesign from "@/views/dsign/component-design";
 
 export default {
   name: 'HomeView',
-  components: {mainHomeHead, mainHomeAside, mainHomeMain}
+  components: {ComponentDesign, mainHomeHead, mainHomeAside, mainHomeMain}
 }
 </script>
 
@@ -30,8 +34,12 @@ export default {
 <style lang="less">
 
 .main-home-header {
-  height: 70px;
+  height: 6vh !important;
   border-bottom: 1px solid #f1e8e8;
+}
+
+.el-aside {
+  height: 90vh;
 }
 
 

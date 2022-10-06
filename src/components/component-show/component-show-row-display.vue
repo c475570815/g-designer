@@ -1,8 +1,8 @@
 <template>
   <el-row align="middle" class="row-display" :gutter="20">
     <draggable
-        v-if="$common.isNotEmpty(dataArr)"
-        :id="refId"
+        v-if="isDataArrEmpty"
+        :id="rowId"
         v-model="dataArr"
         animation="300"
         :style="draggableStyle"
@@ -11,23 +11,22 @@
     >
       <template #item="{element,index}">
         <el-col :span="element.span">
-          <ComponentShow :toolData="element.componentData" :index="index"/>
+          <ComponentShow :tool-data="element.componentData" :index="index" @deleteComponent="deleteComponent"/>
         </el-col>
       </template>
     </draggable>
 
     <draggable
         v-else
-        :id="refId"
+        :id="rowId"
         v-model="emptyArr"
         animation="300"
-        :style="emptyStyle"
         :group="$store.getters.useComponentGroupName"
         item-key="id"
     >
       <template #item="{element,index}">
-        <div :span="element.span">
-          <span>{{ element.text }}</span>
+        <div class="empty-container">
+          <div>{{ element.text }}</div>
         </div>
       </template>
     </draggable>
@@ -51,10 +50,9 @@ export default {
     return {
       defaultSpan: 4,
       dataArr: [],
-      refId: this.$common.getGuid(),
+      rowId: this.$common.getGuid(),
       draggableStyle: {},
-      emptyArr: [{text: "拖动控件到这里呢 亲"}],
-      emptyStyle: {}
+      emptyArr: [{text: "拖动控件到这里呢 亲"}]
     }
   },
   methods: {
@@ -63,6 +61,22 @@ export default {
       for (let data of this.dataArr) {
         data.span = spanCount;
       }
+    },
+    deleteComponent(idArr) {
+      for (let id of idArr) {
+        let deleteIndex = this.dataArr.findIndex(item => item.componentData.code.id === id);
+        if (deleteIndex === -1) {
+          continue;
+        }
+        this.dataArr.splice(deleteIndex, 1)
+      }
+    }
+  },
+  computed: {
+    // 计算属性的 getter
+    isDataArrEmpty: function () {
+      // `this` 指向 vm 实例
+      return this.$common.isNotEmpty(this.dataArr);
     }
   },
   mounted() {
@@ -71,19 +85,14 @@ export default {
       width: '100%',
       display: 'contents'
     }
-    this.emptyStyle = {
-      height: this.$el.style.height,
-      width: '100%',
-      'text-align': 'center'
-    }
   },
   created() {
     //发布拖拽后的相应事件
-    bus.$off(`addComponent${this.refId}`)
-    bus.$on(`addComponent${this.refId}`, ({componentData, displayIndex}) => {
-
+    bus.$off(`addComponent${this.rowId}`)
+    bus.$on(`addComponent${this.rowId}`, ({componentData, displayIndex}) => {
+      componentData.code.id = this.$common.getGuid();
       this.dataArr.splice(displayIndex, 0, {
-        id: this.$common.getGuid,
+        id: this.$common.getGuid(),
         span: this.defaultSpan,
         componentData: componentData
       });
@@ -95,7 +104,5 @@ export default {
 <style lang="less" scoped>
 .row-display {
   width: 100%;
-
-
 }
 </style>

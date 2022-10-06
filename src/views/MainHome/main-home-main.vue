@@ -1,30 +1,52 @@
 <template>
-  <draggable class="drawing-board"
-             v-model="toolList"
-             item-key="name"
-             :group="$store.getters.displayComponentGroupName">
-    <template #item="{element,index}">
-      <component-show
-          :tool-data="element"
-          :index="index"/>
-    </template>
-  </draggable>
+  <div class="design-main">
+    <el-tabs
+        v-model="activeTabId"
+        type="card"
+        class="panel-tabs"
+        editable
+        @edit="tabsEdit"
+    >
+      <el-tab-pane
+          v-for="item in tabArr"
+          :key="item.id"
+          :label="item.title"
+          :name="item.id"
+      >
+        <design-panel :panel-id="item.id"/>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable'
-import componentShow from "@/components/component-show/component-show";
+import designPanel from "@/views/dsign/design-panel";
 
 export default {
   name: "main-home-main",
   props: {},
-  components: {componentShow, draggable},
+  components: {designPanel},
   data() {
     return {
-      toolList: this.$store.getters.getShowToolArr
+      tabArr: [
+        {
+          id: "default",
+          title: "默认面板"
+        }
+      ],
+      activeTabId: 'default'
     }
   },
-  methods: {},
+  methods: {
+    tabsEdit() {
+      let id = this.$common.getGuid();
+      this.tabArr.push({
+        id: id,
+        title: `设计面板-${this.tabArr.length}`
+      });
+      this.activeTabId = id;
+    }
+  },
   mounted() {
 
   },
@@ -33,6 +55,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.design-main {
+  .panel-tabs {
+    .el-tab-pane {
+      width: 100%;
+      height: 80vh;
+      overflow-y: auto;
+    }
+  }
 
+}
 </style>

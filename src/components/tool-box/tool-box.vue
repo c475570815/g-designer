@@ -21,10 +21,10 @@
           :sort="false"
           @end="onEnd"
           item-key="name">
-        <template #item="{element,index}">
-          <el-col :span="12" :style="{margin:'5px'}">
+        <template #item="{element,index}" class="tool-container">
+          <div class="tool-item" :style="{margin:'5px'}">
             <toolComponent :tool-data="element"/>
-          </el-col>
+          </div>
         </template>
       </draggable>
     </el-card>
@@ -56,9 +56,11 @@ export default {
       if (obj.from !== obj.to) {
         //添加布局组件
         if (this.$common.isDisplayGroup(this.activeToolData)) {
-          this.$store.commit('addShowTool', this.activeToolData);
+          bus.$emit(`addShowComponent${obj.to.id}`, {
+            "componentData": this.activeToolData,
+            "displayIndex": obj.newDraggableIndex
+          })
         } else {
-
           bus.$emit(`addComponent${obj.to.id}`, {
             "componentData": this.activeToolData,
             "displayIndex": obj.newDraggableIndex
@@ -74,13 +76,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 .toolbox-card {
   margin: 10px;
 
-.ghost-class {
-  background-color: red !important;
-}
+  .ghost-class {
+
+  }
+
+  .tool-item {
+    display: inline-block;
+    line-height: 40px;
+  }
 }
 </style>
