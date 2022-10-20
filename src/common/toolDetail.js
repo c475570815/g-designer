@@ -21,7 +21,7 @@ export default [
                 "iconName": "folder",
                 "code": {
                     "componentTag": "span",
-                    "defaultContent":"标签"
+                    "defaultContent": "标签"
                 }
             },
             {
@@ -43,11 +43,12 @@ export default [
                 "code": {
                     "componentTag": "el-date-picker",
                     "type": "daterange",
-                    "range-separator":"至",
-                    "start-placeholder":"开始时间",
-                    "end-placeholder":"结束时间",
+                    "range-separator": "至",
+                    "start-placeholder": "开始时间",
+                    "end-placeholder": "结束时间",
                     "style": {
-                        width: "250px"
+                        width: '100%',
+                        padding: '0 0'
                     }
                 }
             },

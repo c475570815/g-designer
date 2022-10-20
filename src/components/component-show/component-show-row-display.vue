@@ -6,12 +6,16 @@
         v-model="dataArr"
         animation="300"
         :style="draggableStyle"
-        :group="$store.getters.useComponentGroupName"
+        :group="useComponentGroupName"
         item-key="id"
     >
       <template #item="{element,index}">
         <el-col :span="element.span">
-          <ComponentShow :tool-data="element.componentData" :index="index" @deleteComponent="deleteComponent"/>
+          <ComponentShow
+              :tool-data="element.componentData"
+              :index="index"
+              :display-container-id="rowId"
+              @deleteComponent="deleteComponent"/>
         </el-col>
       </template>
     </draggable>
@@ -21,7 +25,7 @@
         :id="rowId"
         v-model="emptyArr"
         animation="300"
-        :group="$store.getters.useComponentGroupName"
+        :group="useComponentGroupName"
         item-key="id"
     >
       <template #item="{element,index}">
@@ -38,6 +42,7 @@
 import ComponentShow from "@/components/component-show/component-show";
 import draggable from "vuedraggable";
 import bus from "@/bus";
+import {mapState} from "vuex";
 
 export default {
   name: "component-show-row-display",
@@ -56,12 +61,6 @@ export default {
     }
   },
   methods: {
-    autoDisplay() {
-      let spanCount = 24 / this.dataArr.length;
-      for (let data of this.dataArr) {
-        data.span = spanCount;
-      }
-    },
     deleteComponent(idArr) {
       for (let id of idArr) {
         let deleteIndex = this.dataArr.findIndex(item => item.componentData.code.id === id);
@@ -77,7 +76,10 @@ export default {
     isDataArrEmpty: function () {
       // `this` 指向 vm 实例
       return this.$common.isNotEmpty(this.dataArr);
-    }
+    },
+    ...mapState({
+      useComponentGroupName: state => state.useComponentGroupName
+    })
   },
   mounted() {
     this.draggableStyle = {
@@ -88,15 +90,27 @@ export default {
   },
   created() {
     //发布拖拽后的相应事件
-    bus.$off(`addComponent${this.rowId}`)
-    bus.$on(`addComponent${this.rowId}`, ({componentData, displayIndex}) => {
+    bus.$off(`addComponent-${this.rowId}`)
+    bus.$on(`addComponent-${this.rowId}`, ({componentData, displayIndex}) => {
       componentData.code.id = this.$common.getGuid();
       this.dataArr.splice(displayIndex, 0, {
-        id: this.$common.getGuid(),
         span: this.defaultSpan,
         componentData: componentData
       });
     })
+
+    bus.$off(`changeComponent-${this.rowId}`)
+    bus.$on(`changeComponent-${this.rowId}`, ({componentId, componentData}) => {
+      let changeIndex = this.dataArr.findIndex((data) => {
+        return data.componentData.code.id === componentId;
+      });
+      if (changeIndex === -1) {
+        console.error("错误的组件id");
+      }
+      this.dataArr[changeIndex].span = componentData.span;
+      this.dataArr[changeIndex].componentData.code = componentData;
+    })
+
   }
 }
 </script>

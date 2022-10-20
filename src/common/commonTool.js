@@ -1,4 +1,4 @@
-import {toRaw} from "vue";
+import store from "@/store";
 
 
 const isEmpty = (checkObject) => {
@@ -19,54 +19,6 @@ const isNotEmpty = (checkObject) => {
 }
 
 /**
- * 对象深拷贝
- * @param obj
- * @returns {*[]|*|RegExp|Date}
- */
-const deepClone = (obj) => {
-    const _toString = Object.prototype.toString
-
-    // null, undefined, non-object, function
-    if (!obj || typeof obj !== 'object') {
-        return obj
-    }
-
-    // DOM Node
-    if (obj.nodeType && 'cloneNode' in obj) {
-        return obj.cloneNode(true)
-    }
-
-    // Date
-    if (_toString.call(obj) === '[object Date]') {
-        return new Date(obj.getTime())
-    }
-
-    // RegExp
-    if (_toString.call(obj) === '[object RegExp]') {
-        const flags = []
-        if (obj.global) {
-            flags.push('g')
-        }
-        if (obj.multiline) {
-            flags.push('m')
-        }
-        if (obj.ignoreCase) {
-            flags.push('i')
-        }
-
-        return new RegExp(obj.source, flags.join(''))
-    }
-
-    const result = Array.isArray(obj) ? [] : obj.constructor ? new obj.constructor() : {}
-
-    for (const key in obj) {
-        result[key] = deepClone(obj[key])
-    }
-
-    return result
-}
-
-/**
  * 生成guid
  * @returns {string}
  */
@@ -83,14 +35,32 @@ const getGuid = () => {
  * @returns {boolean}  true表示是 布局组件
  */
 const isDisplayGroup = (item) => {
-    return  item.type === 'display';
+    return item.type === 'display';
 }
 
+const handleConfigComponentData = (tagData) => {
+    let componentTagName = store.getters.getComponentTagName;
+    let componentTag = tagData[componentTagName];
+    let defaultContentTag = store.getters.getDefaultContent;
+    let defaultValueTag = store.getters.getDefaultValue;
+    let outPutKeyArr = [componentTagName, defaultContentTag, defaultValueTag]
+    let keys = Object.keys(tagData);
+    let param = {}
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        if (outPutKeyArr.indexOf(key) < 0) {
+            param[key] = tagData[key];
+        }
+    }
+    let defaultContent = isEmpty(tagData[defaultContentTag]) ? "" : tagData[defaultContentTag];
+    let defaultValue = isEmpty(tagData[defaultValueTag]) ? "" : tagData[defaultValueTag];
+    return {param, componentTag, defaultContent, defaultValue};
+}
 
 export default {
     isEmpty,
     isNotEmpty,
-    deepClone,
     getGuid,
-    isDisplayGroup
+    isDisplayGroup,
+    handleConfigComponentData
 }

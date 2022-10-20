@@ -19,14 +19,13 @@ const displayComponentItem = [componentShowRowDisplay];
 
 const app = createApp(App)
 
-
 //加载所有图标为全局组件
 for (const name in ElIcons) {
     app.component(name, ElIcons[name])
 }
 
 //全局引用
-app.use(ElementPlus,{locale})
+app.use(ElementPlus, {locale})
 app.use(store)
 app.use(router)
 displayComponentItem.forEach((item) => {

@@ -6,7 +6,7 @@
         :id="panelId"
         v-model="toolList"
         item-key="name"
-        :group="$store.getters.displayComponentGroupName">
+        :group="displayComponentGroupName">
       <template #item="{element,index}">
         <component-show
             :tool-data="element.componentData"
@@ -20,7 +20,7 @@
         :id="panelId"
         v-model="emptyArr"
         animation="300"
-        :group="$store.getters.displayComponentGroupName"
+        :group="displayComponentGroupName"
         item-key="id"
     >
       <template #item="{element,index}">
@@ -37,6 +37,7 @@
 import draggable from 'vuedraggable'
 import componentShow from "@/components/component-show/component-show";
 import bus from "@/bus";
+import {mapState} from "vuex";
 
 export default {
   name: "design-panel",
@@ -55,7 +56,10 @@ export default {
     isDataArrEmpty: function () {
       // `this` 指向 vm 实例
       return this.$common.isNotEmpty(this.toolList);
-    }
+    },
+    ...mapState({
+      displayComponentGroupName: state => state.displayComponentGroupName
+    })
   },
   methods: {
     deleteComponent(idArr) {

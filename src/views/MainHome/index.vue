@@ -10,9 +10,9 @@
       <el-main>
         <mainHomeMain/>
       </el-main>
-<!--      <div style="width: 300px">-->
-<!--        <ComponentDesign :component-id=""/>-->
-<!--      </div>-->
+      <div style="width: 300px" v-if="activeComponentId">
+        <ComponentDesign :component-id="activeComponentId"/>
+      </div>
     </el-container>
   </el-container>
 </template>
@@ -23,10 +23,17 @@ import mainHomeHead from "@/views/MainHome/main-home-head";
 import mainHomeAside from "@/views/MainHome/main-home-aside";
 import mainHomeMain from "@/views/MainHome/main-home-main";
 import ComponentDesign from "@/views/dsign/component-design";
+import {mapState} from 'vuex'
 
 export default {
   name: 'HomeView',
-  components: {ComponentDesign, mainHomeHead, mainHomeAside, mainHomeMain}
+  components: {ComponentDesign, mainHomeHead, mainHomeAside, mainHomeMain},
+  computed: {
+    ...
+        mapState({
+          activeComponentId: state => state.activeEditComponentData.id
+        })
+  }
 }
 </script>
 

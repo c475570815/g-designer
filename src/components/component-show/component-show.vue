@@ -1,17 +1,20 @@
 <script>
-
-
 import {render, h, resolveComponent} from "vue";
-
-import commonTool from "@/common/commonTool";
-import bus from "@/bus";
+import {cloneDeep} from "lodash";
+import {mapState} from "vuex";
 
 export default {
   name: "component-show",
   data() {
     return {
       editingClass: 'choose-component',
+      componentData: {},
     }
+  },
+  computed: {
+    ...mapState({
+      activeEditComponentDataId: state => state.activeEditComponentData.id,
+    })
   },
   methods: {
     /**
@@ -19,19 +22,37 @@ export default {
      * @param componentId
      */
     editComponentClick(componentId) {
-      console.log(document.getElementById(`${componentId}`));
       let clickDom = document.getElementById(componentId);
-      if (clickDom.classList.contains('el-row')) {
-        //选中了一个行布局
-      } else {
-        let containerDom = document.getElementById(`div-${componentId}`)
-        if (containerDom.className.indexOf(this.editingClass) === -1) {
-          containerDom.className += ` ${this.editingClass}`
-        } else {
-          containerDom.className = containerDom.className.replaceAll(` ${this.editingClass}`, '')
+      let containerDom = document.getElementById(`div-${componentId}`)
+      if (containerDom.className.indexOf(this.editingClass) === -1) {
+        //清除其他组件选中样式
+        for (let i = 0; i < document.getElementsByClassName(this.editingClass).length; i++) {
+          let classDom = document.getElementsByClassName(this.editingClass)[i]
+          this.clearEditingClass(classDom);
         }
+        this.$store.commit('changeActiveEditComponentData', {
+          //当前编辑的组件id
+          id: componentId,
+          //当前编辑的组件所属展示主键
+          displayContainerId: this.displayContainerId,
+          //当前编辑的组件数据
+          componentData: this.componentData,
+        });
+        //设置编辑组件class
+        containerDom.className += ` ${this.editingClass}`
+      } else {
+        this.$store.commit('setActiveEditComponentDataEmpty')
+        this.clearEditingClass(containerDom)
       }
     },
+    /**
+     * 清空编辑class
+     * @param dom
+     */
+    clearEditingClass(dom) {
+      dom.className = dom.className.replaceAll(` ${this.editingClass}`, '')
+    },
+
     /**
      * 控件删除
      * @param clickDom
@@ -39,14 +60,11 @@ export default {
      */
     deleteComponent(clickDom, componentId) {
       let containerDom = document.getElementById(`div-${componentId}`);
-      if (containerDom.parentNode.classList.contains('el-col')) {
-        //行布局
-        containerDom.parentNode.parentNode.removeChild(containerDom.parentNode);
-      } else {
-        //删除自己的容器
-        containerDom.parentNode.removeChild(containerDom);
-      }
+      containerDom.parentNode.removeChild(containerDom);
       this.$emit('deleteComponent', [componentId]);
+      if (this.activeEditComponentDataId === componentId) {
+        this.$store.commit('setActiveEditComponentDataEmpty')
+      }
     },
     /**
      * 创建使用控件
@@ -58,7 +76,7 @@ export default {
      */
     createUseComponent(tagData, componentTag, param, defaultContent) {
       //主要生成的组件
-      let componentNode = h(resolveComponent(tagData[componentTag]), {
+      let componentNode = h(resolveComponent(componentTag), {
         class: 'component-default',
         ...param
       }, {default: () => defaultContent})
@@ -71,19 +89,26 @@ export default {
             class: 'component-container',
             id: `div-${tagData.id}`
           },
-          [componentNode,
-            h(resolveComponent('el-icon'),
-                {
-                  class: 'delete',
-                  id: `delete-${tagData.id}`,
-                  color: '#409EFF',
-                  onClick: (event) => {
-                    this.deleteComponent(event.currentTarget, tagData.id);
-                    event.stopPropagation();
-                  }
-                },
-                [h(resolveComponent('DeleteFilled'), {}, [])])]
+          {default: () => [componentNode, this.createDeleteIcon(tagData)]}
       )
+    },
+    /**
+     * 创建右上角的删除按钮
+     * @param tagData
+     * @returns {VNode}
+     */
+    createDeleteIcon(tagData) {
+      return h(resolveComponent('el-icon'),
+          {
+            class: 'delete',
+            id: `delete-${tagData.id}`,
+            color: '#409EFF',
+            onClick: (event) => {
+              this.deleteComponent(event.currentTarget, tagData.id);
+              event.stopPropagation();
+            }
+          },
+          () => [h(resolveComponent('DeleteFilled'), {}, () => [])])
     },
     /**
      * 创建展示控件
@@ -94,59 +119,42 @@ export default {
      */
     createDisplayComponent(tagData, componentTag, param) {
       //主要生成的组件
-      return h(resolveComponent(tagData[componentTag]), {
-        onClick: (event) => {
-          this.editComponentClick(tagData.id)
-          event.stopPropagation();
-        },
-        class: 'display-component',
-        ...param
-      }, [h(resolveComponent('el-icon'),
-          {
-            class: 'delete',
-            id: `delete-${tagData.id}`,
-            color: '#409EFF',
-            onClick: (event) => {
-              this.deleteComponent(event.currentTarget, tagData.id);
-              event.stopPropagation();
-            }
+      return h('div', {
+            // onClick: (event) => {
+            //   this.editComponentClick(tagData.id)
+            //   event.stopPropagation();
+            // },
+            class: 'display-component-container',
+            id: `div-${tagData.id}`
           },
-          [h(resolveComponent('DeleteFilled'), {}, [])])])
+          {
+            default: () => [h(resolveComponent(componentTag), {
+              // onClick: (event) => {
+              //   this.editComponentClick(tagData.id)
+              //   event.stopPropagation();
+              // },
+              ...param
+            }, () => [this.createDeleteIcon(tagData)]), this.createDeleteIcon(tagData)]
+          }
+      )
     }
   },
   props: {
     toolData: {type: Object, require: true},
-  },
-  components: {
-    render
+    displayContainerId: {type: String, require: true}
   },
   render(createElement, context) {
-    let tagData = this.$common.deepClone(this.toolData.code);
-    let componentTag = this.$store.getters.getComponentTagName;
-    let defaultContentTag = this.$store.getters.getDefaultContent;
-    let outPutKeyArr = [componentTag, defaultContentTag]
-    let keys = Object.keys(tagData);
-    let param = {}
-    for (let i = 0; i < keys.length; i++) {
-      if (outPutKeyArr.indexOf(keys[i]) < 0) {
-        param[keys[i]] = tagData[keys[i]];
-      }
-    }
-    let defaultContent = this.$common.isEmpty(tagData[defaultContentTag]) ? "" : tagData[defaultContentTag]
+    debugger
+    this.componentData = cloneDeep(this.toolData.code);
+    let {param, componentTag, defaultContent} = this.$common.handleConfigComponentData(this.componentData);
     switch (this.toolData.type) {
       case "display":
         //布局类型组件
-        return this.createDisplayComponent(tagData, componentTag, param);
+        return this.createDisplayComponent(this.componentData, componentTag, param);
       case "use":
         //使用类型
-        return this.createUseComponent(tagData, componentTag, param, defaultContent);
+        return this.createUseComponent(this.componentData, componentTag, param, defaultContent);
     }
-  }, created() {
-    //根据id获取组件数据
-    bus.$off(`getComponentDataById-${this.toolData.code.id}`)
-    bus.$on(`getComponentDataById-${this.toolData.code.id}`, () => {
-      return this.$common.deepClone(this.toolData);
-    })
   }
 }
 </script>
@@ -161,10 +169,12 @@ export default {
   width: auto;
 }
 
-.display-component {
+.display-component-container {
   position: relative;
   border: 1px dashed #409EFF;
-  padding: 5px;
+  margin-top: 9px;
+  margin-right: 9px;
+  padding-left: 5px;
 }
 
 .component-container {

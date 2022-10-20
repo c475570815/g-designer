@@ -1,12 +1,13 @@
 export default {
-    'el-input': [
+    common: [
         {
             key: 'span',
             label: '表单栅格',
             code: {
                 "componentTag": "el-input-number",
-                "min": "1",
-                "max": "24"
+                "min": 1,
+                "max": 24,
+                "defaultValue": 4
             }
         }, {
             key: 'fieldName',
@@ -15,13 +16,30 @@ export default {
                 "componentTag": "el-input",
                 "placeholder": "请输入字段名称"
             }
+        }, {
+            key: 'componentStyle',
+            label: '组件样式',
+            code: {
+                "componentTag": "el-input",
+                "placeholder": "请输入组件样式",
+                "rows": 2,
+                "type": "textarea"
+            }
         }
     ],
-    'span':[
-
-    ],
-    'el-button':[
-
-    ]
-
+    tag: {
+        'el-input': [
+            {
+                key: 'type',
+                label: '输入类型',
+                code: {
+                    "componentTag": "el-input",
+                    "placeholder": "请输入输入类型"
+                }
+            }
+        ],
+        'span': [],
+        'el-button': [],
+        'el-date-picker': []
+    }
 }
