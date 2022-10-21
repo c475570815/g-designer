@@ -1,13 +1,21 @@
 import {createStore} from 'vuex'
 import toolDetail from "@/common/toolDetail";
+import formOption from "@/common/componentFormOption";
 
 export default createStore({
     state: {
         //配置组件中的常量
-        componentConstValue: {
+        componentConstValueKeyName: {
+            //标签名称
             tagName: "componentTag",
-            defaultContent: "defaultContent",
-            defaultValue: "defaultValue"
+            //默认子内容
+            defaultContentName: "defaultContent",
+            //默认value
+            defaultValueName: "defaultValue",
+            //是否是模块
+            isComponentName: "isComponentTag",
+            //布局属性
+            spanName:"span"
         },
         //配置组件数据
         configToolData: toolDetail,
@@ -38,21 +46,13 @@ export default createStore({
         useComponentGroupName(state) {
             return state.useComponentGroupName
         },
-        getComponentTagName(state) {
-            return state.componentConstValue.tagName;
-        },
-        getDefaultContent(state) {
-            return state.componentConstValue.defaultContent;
-        },
-        getDefaultValue(state) {
-            return state.componentConstValue.defaultValue;
+        getComponentConstValueKeyName(state){
+            return state.componentConstValueKeyName
         }
-
     },
     // 处理数据的唯一途径，state的改变或赋值只能在这里
     mutations: {
         changeActiveEditComponentData(state, data) {
-            debugger
             state.activeEditComponentData = data;
         },
         setActiveEditComponentDataEmpty(state) {

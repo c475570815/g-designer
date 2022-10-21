@@ -10,6 +10,7 @@
       <template #item="{element,index}">
         <component-show
             :tool-data="element.componentData"
+            :display-container-id="element.id"
             :index="index"
             @deleteComponent="deleteComponent"/>
       </template>
@@ -48,6 +49,21 @@ export default {
   data() {
     return {
       toolList: [],
+      // toolList: [{
+      //   "id": "9482e867-a94b-542a-6cc5-45a2b64cc8da",
+      //   "componentData": {
+      //     "id": "3-1",
+      //     "name": "行布局",
+      //     "type": "display",
+      //     "iconName": "folder",
+      //     "code": {
+      //       "componentTag": "component-show-row-display",
+      //       "gutter": 0,
+      //       "style": {"height": "70px"},
+      //       "id": "fdade588-2030-74ad-7df0-4a272e036197"
+      //     }
+      //   }
+      // }],
       emptyArr: [{text: "拖动布局控件到这里呢 亲"}]
     }
   },
@@ -79,10 +95,24 @@ export default {
     bus.$off(`addShowComponent${this.panelId}`)
     bus.$on(`addShowComponent${this.panelId}`, ({componentData, displayIndex}) => {
       componentData.code.id = this.$common.getGuid();
-      this.toolList.splice(displayIndex, 0, {
+      let newShowComponent = {
         id: this.$common.getGuid(),
         componentData: componentData
-      });
+      }
+      this.toolList.splice(displayIndex, 0, newShowComponent);
+
+      //修改布局型组件属性
+      bus.$off(`changeComponent-${newShowComponent.id}`)
+      bus.$on(`changeComponent-${newShowComponent.id}`, ({componentId, componentData}) => {
+        let changeIndex = this.toolList.findIndex((data) => {
+          return data.componentData.code.id === componentId;
+        });
+        if (changeIndex === -1) {
+          console.error("错误的组件id");
+        }
+        this.toolList[changeIndex].span = componentData.span;
+        this.toolList[changeIndex].componentData.code = componentData;
+      })
     })
   }
 }

@@ -29,8 +29,9 @@ import bus from "@/bus";
 import formOption from "@/common/componentFormOption";
 import ComponentDesignItem from "@/views/dsign/component-design-item";
 import {reactive} from "vue";
-import {cloneDeep} from "lodash";
+import {cloneDeep, isEqual} from "lodash";
 import {mapState} from "vuex";
+import {propertyValueFormat} from "@/common/dataFormat";
 
 export default {
   name: "component-design",
@@ -52,14 +53,26 @@ export default {
   computed: {
     ...mapState({
       formOptions(state) {
-        let activeComponentData = state.activeEditComponentData.componentData;
-        let res = [
-          ...formOption.common,
-          ...formOption.tag[activeComponentData.componentTag]
-        ];
+        let res
+        if (this.$common.isEmpty(formOption.tag[this.componentData.componentTag])) {
+          //没有单独属性配置的组件
+          res = [
+            ...formOption.common
+          ];
+        } else {
+          res = [
+            ...formOption.common,
+            ...formOption.tag[this.componentData.componentTag]
+          ];
+        }
         for (let option of res) {
           if (this.$common.isNotEmpty(option)) {
-            this.formState.form[option.key] = this.$common.isEmpty(activeComponentData[option.key]) ? '' : activeComponentData[option.key];
+            let value = this.componentData[option.key];
+            //按属性转换
+            value = Object.keys(propertyValueFormat).includes(option.key)
+                ? propertyValueFormat[option.key](value)
+                : value
+            this.formState.form[option.key] = this.$common.isEmpty(value) ? '' : value;
           }
         }
         return res;
@@ -70,8 +83,7 @@ export default {
   },
   methods: {
     changeFormValue(key, value) {
-      debugger
-      if (this.formState.form[key] !== value) {
+      if (!isEqual(this.formState.form[key], value)) {
         this.formState.form[key] = value;
         //更改全局active
         let componentData = cloneDeep(this.componentData);

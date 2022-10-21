@@ -21,6 +21,7 @@ export default [
                 "iconName": "folder",
                 "code": {
                     "componentTag": "span",
+                    "isComponentTag": false,
                     "defaultContent": "标签"
                 }
             },

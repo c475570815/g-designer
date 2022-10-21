@@ -39,11 +39,20 @@ const isDisplayGroup = (item) => {
 }
 
 const handleConfigComponentData = (tagData) => {
-    let componentTagName = store.getters.getComponentTagName;
-    let componentTag = tagData[componentTagName];
-    let defaultContentTag = store.getters.getDefaultContent;
-    let defaultValueTag = store.getters.getDefaultValue;
-    let outPutKeyArr = [componentTagName, defaultContentTag, defaultValueTag]
+    //获取约定的标签名称
+    let {
+        tagName,
+        defaultContentName,
+        defaultValueName,
+        isComponentName
+    } = store.getters.getComponentConstValueKeyName
+    //取值
+    let componentTag = tagData[tagName];
+    let isComponent = isEmpty(tagData[isComponentName]) ? true : tagData[isComponentName];
+    let defaultContent = isEmpty(tagData[defaultContentName]) ? "" : tagData[defaultContentName];
+    let defaultValue = isEmpty(tagData[defaultValueName]) ? "" : tagData[defaultValueName];
+    //排除特殊约定的组件属性,剩下为组件自身属性
+    let outPutKeyArr = Object.values(store.getters.getComponentConstValueKeyName)
     let keys = Object.keys(tagData);
     let param = {}
     for (let i = 0; i < keys.length; i++) {
@@ -51,10 +60,9 @@ const handleConfigComponentData = (tagData) => {
         if (outPutKeyArr.indexOf(key) < 0) {
             param[key] = tagData[key];
         }
+
     }
-    let defaultContent = isEmpty(tagData[defaultContentTag]) ? "" : tagData[defaultContentTag];
-    let defaultValue = isEmpty(tagData[defaultValueTag]) ? "" : tagData[defaultValueTag];
-    return {param, componentTag, defaultContent, defaultValue};
+    return {param, componentTag, defaultContent, defaultValue, isComponent};
 }
 
 export default {

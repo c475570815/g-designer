@@ -17,12 +17,12 @@ export default {
                 "placeholder": "请输入字段名称"
             }
         }, {
-            key: 'componentStyle',
+            key: 'style',
             label: '组件样式',
             code: {
                 "componentTag": "el-input",
                 "placeholder": "请输入组件样式",
-                "rows": 2,
+                "rows": 4,
                 "type": "textarea"
             }
         }
@@ -36,10 +36,31 @@ export default {
                     "componentTag": "el-input",
                     "placeholder": "请输入输入类型"
                 }
+            },
+            {
+                key: 'placeholder',
+                label: '提示信息',
+                code: {
+                    "componentTag": "el-input",
+                    "placeholder": "提示输入信息"
+                }
             }
         ],
-        'span': [],
+        'span': [
+            {
+                key: 'defaultContent',
+                label: '显示值',
+                code: {
+                    "componentTag": "el-input",
+                    "placeholder": "输入显示值",
+                    "defaultContent": "标签"
+                }
+            }
+        ],
         'el-button': [],
         'el-date-picker': []
+    },
+    valueFormat: {
+
     }
 }

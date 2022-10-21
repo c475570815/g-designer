@@ -2,19 +2,22 @@
 import {render, h, resolveComponent} from "vue";
 import {cloneDeep} from "lodash";
 import {mapState} from "vuex";
+import bus from "@/bus";
 
 export default {
   name: "component-show",
   data() {
     return {
-      editingClass: 'choose-component',
-      componentData: {},
+      editingClass: 'choose-component'
     }
   },
   computed: {
     ...mapState({
       activeEditComponentDataId: state => state.activeEditComponentData.id,
-    })
+    }),
+    componentData() {
+      return cloneDeep(this.toolData.code)
+    }
   },
   methods: {
     /**
@@ -70,13 +73,14 @@ export default {
      * 创建使用控件
      * @param tagData
      * @param componentTag
+     * @param isComponent
      * @param param
      * @param defaultContent
      * @returns {VNode}
      */
-    createUseComponent(tagData, componentTag, param, defaultContent) {
+    createUseComponent(tagData, componentTag, isComponent, defaultContent, param) {
       //主要生成的组件
-      let componentNode = h(resolveComponent(componentTag), {
+      let componentNode = h((isComponent ? resolveComponent(componentTag) : componentTag), {
         class: 'component-default',
         ...param
       }, {default: () => defaultContent})
@@ -114,25 +118,22 @@ export default {
      * 创建展示控件
      * @param tagData
      * @param componentTag
+     * @param isComponent
      * @param param
      * @returns {VNode}
      */
-    createDisplayComponent(tagData, componentTag, param) {
+    createDisplayComponent(tagData, componentTag, isComponent, param) {
       //主要生成的组件
       return h('div', {
-            // onClick: (event) => {
-            //   this.editComponentClick(tagData.id)
-            //   event.stopPropagation();
-            // },
+            onClick: (event) => {
+              this.editComponentClick(tagData.id)
+              event.stopPropagation();
+            },
             class: 'display-component-container',
             id: `div-${tagData.id}`
           },
           {
-            default: () => [h(resolveComponent(componentTag), {
-              // onClick: (event) => {
-              //   this.editComponentClick(tagData.id)
-              //   event.stopPropagation();
-              // },
+            default: () => [h((isComponent ? resolveComponent(componentTag) : componentTag), {
               ...param
             }, () => [this.createDeleteIcon(tagData)]), this.createDeleteIcon(tagData)]
           }
@@ -144,16 +145,19 @@ export default {
     displayContainerId: {type: String, require: true}
   },
   render(createElement, context) {
-    debugger
-    this.componentData = cloneDeep(this.toolData.code);
-    let {param, componentTag, defaultContent} = this.$common.handleConfigComponentData(this.componentData);
+    let {
+      param,
+      componentTag,
+      defaultContent,
+      isComponent
+    } = this.$common.handleConfigComponentData(this.componentData);
     switch (this.toolData.type) {
       case "display":
         //布局类型组件
-        return this.createDisplayComponent(this.componentData, componentTag, param);
+        return this.createDisplayComponent(this.componentData, componentTag, isComponent, param);
       case "use":
         //使用类型
-        return this.createUseComponent(this.componentData, componentTag, param, defaultContent);
+        return this.createUseComponent(this.componentData, componentTag, isComponent, defaultContent, param);
     }
   }
 }

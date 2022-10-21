@@ -16,16 +16,24 @@ export default {
   methods: {},
   render(createElement, context) {
     let tagData = cloneDeep(this.param.code);
-    let {param, componentTag, defaultContent, defaultValue} = this.$common.handleConfigComponentData(tagData);
-    if (this.$common.isEmpty(this.value) && this.$common.isNotEmpty(defaultValue)){
+    let {
+      param,
+      componentTag,
+      defaultContent,
+      defaultValue,
+      isComponent
+    } = this.$common.handleConfigComponentData(tagData);
+    if (this.$common.isEmpty(this.value) && this.$common.isNotEmpty(defaultValue)) {
       this.$emit('changeValue', this.itemKey, defaultValue);
       //不使用非默认值render
-      return ;
+      return;
     }
-    let componentNode = h(resolveComponent(componentTag),
+    let componentNode = h((isComponent ? resolveComponent(componentTag) : componentTag),
         {
           modelValue: this.value,
-          'onUpdate:modelValue': (value) => this.$emit('changeValue', this.itemKey, value),
+          'onUpdate:modelValue': (value) => {
+            this.$emit('changeValue', this.itemKey, value)
+          },
           ...param
         },
         () => [defaultContent]);
