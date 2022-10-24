@@ -15,7 +15,9 @@ export default createStore({
             //是否是模块
             isComponentName: "isComponentTag",
             //布局属性
-            spanName:"span"
+            spanName: "span",
+            //单独指定值字段名称
+            valueFiledName: "valueFiledName"
         },
         //配置组件数据
         configToolData: toolDetail,
@@ -46,7 +48,7 @@ export default createStore({
         useComponentGroupName(state) {
             return state.useComponentGroupName
         },
-        getComponentConstValueKeyName(state){
+        getComponentConstValueKeyName(state) {
             return state.componentConstValueKeyName
         }
     },

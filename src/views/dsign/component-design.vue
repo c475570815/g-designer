@@ -31,7 +31,7 @@ import ComponentDesignItem from "@/views/dsign/component-design-item";
 import {reactive} from "vue";
 import {cloneDeep, isEqual} from "lodash";
 import {mapState} from "vuex";
-import {propertyValueFormat} from "@/common/dataFormat";
+import {designPropertyValueFormat} from "@/common/dataFormat";
 
 export default {
   name: "component-design",
@@ -69,8 +69,8 @@ export default {
           if (this.$common.isNotEmpty(option)) {
             let value = this.componentData[option.key];
             //按属性转换
-            value = Object.keys(propertyValueFormat).includes(option.key)
-                ? propertyValueFormat[option.key](value)
+            value = Object.keys(designPropertyValueFormat).includes(option.key)
+                ? designPropertyValueFormat[option.key](value)
                 : value
             this.formState.form[option.key] = this.$common.isEmpty(value) ? '' : value;
           }

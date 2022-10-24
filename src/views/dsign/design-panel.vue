@@ -39,6 +39,7 @@ import draggable from 'vuedraggable'
 import componentShow from "@/components/component-show/component-show";
 import bus from "@/bus";
 import {mapState} from "vuex";
+import {domPropertyValueFormat} from "@/common/dataFormat";
 
 export default {
   name: "design-panel",
@@ -110,6 +111,14 @@ export default {
         if (changeIndex === -1) {
           console.error("错误的组件id");
         }
+        //格式化属性值
+        // let keyArr = Object.keys(componentData);
+        // for (let i = 0; i < keyArr.length; i++) {
+        //   let key = keyArr[i]
+        //   componentData[key] = Object.keys(domPropertyValueFormat).includes(key)
+        //       ? domPropertyValueFormat[key](componentData[key])
+        //       : componentData[key]
+        // }
         this.toolList[changeIndex].span = componentData.span;
         this.toolList[changeIndex].componentData.code = componentData;
       })

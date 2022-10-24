@@ -17,21 +17,46 @@ export const tagValueFormat = {
  * 按属性转换
  * @type {{}}
  */
-export const propertyValueFormat = {
-    "style": (data) => {
-        let res = data;
-        if (common.isEmpty(data)) {
-            res = "";
-        } else if (typeof data === 'object') {
-            let keyArr = Object.keys(data)
-            let valueArr = Object.values(data)
-            res = "";
-            for (let i = 0; i < keyArr.length; i++) {
-                let key = keyArr[i];
-                let value = valueArr[i];
-                res = res.concat(`${key}:${value};`)
+export const designPropertyValueFormat = {
+    style: (data) => {
+        try {
+            let res = data;
+            if (common.isEmpty(data)) {
+                res = "";
+            } else if (typeof data === 'object') {
+                res = toString(data);
+                // res = res.replaceAll("{", "{\n");
+                // res = res.replaceAll("}", "\n}");
+                // res = res.replaceAll(";", ";\n");
+
+
+                res = res.replaceAll("{", "");
+                res = res.replaceAll("}", "");
+                res = res.replaceAll("\"", "");
+            } else if (typeof res === 'string' && res.indexOf("{") < 0) {
+                // res = `{\n${res}\n}`
             }
+            return res;
+        } catch (e) {
+            return data;
         }
-        return res;
+    }
+}
+export const domPropertyValueFormat = {
+    style: (data) => {
+        try {
+            let res = data;
+            if (common.isEmpty(data)) {
+                res = "";
+            } else if (typeof res === 'string' && res.indexOf(":") > 0) {
+                res = res.replaceAll("{", "")
+                res = res.replaceAll("}", "")
+                res = res.replaceAll("\n", "")
+                res = res.replaceAll("\"", "")
+            }
+            return res;
+        } catch (e) {
+            return data;
+        }
     }
 }

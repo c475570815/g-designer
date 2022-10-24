@@ -43,6 +43,7 @@ import ComponentShow from "@/components/component-show/component-show";
 import draggable from "vuedraggable";
 import bus from "@/bus";
 import {mapState} from "vuex";
+import {domPropertyValueFormat} from "@/common/dataFormat";
 
 export default {
   name: "component-show-row-display",
@@ -108,6 +109,14 @@ export default {
         console.error("错误的组件id");
       }
       this.dataArr[changeIndex].span = componentData.span;
+      // //格式化属性值
+      // let keyArr = Object.keys(componentData);
+      // for (let i = 0; i < keyArr.length; i++) {
+      //   let key = keyArr[i]
+      //   componentData[key] = Object.keys(domPropertyValueFormat).includes(key)
+      //       ? domPropertyValueFormat[key](componentData[key])
+      //       : componentData[key]
+      // }
       this.dataArr[changeIndex].componentData.code = componentData;
     })
 

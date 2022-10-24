@@ -20,10 +20,22 @@ export default {
             key: 'style',
             label: '组件样式',
             code: {
-                "componentTag": "el-input",
-                "placeholder": "请输入组件样式",
-                "rows": 4,
-                "type": "textarea"
+                "valueFiledName": "value",
+                "componentTag": "Codemirror",
+                // "defaultValue": "{\n\n}",
+                options: {
+                    mode: "text/css", // 语言模式
+                    theme: "idea", // 主题
+                    lineNumbers: true, // 显示行号
+                    smartIndent: true, // 智能缩进
+                    indentUnit: 2, // 智能缩进单位为4个空格长度
+                    foldGutter: true, // 启用行槽中的代码折叠
+                    styleActiveLine: true, // 显示选中行的样式
+                    autofocus: true,
+                },
+                // onCursorActivity: (codemirror) => {
+                //     codemirror.showHint();
+                // }
             }
         }
     ],
@@ -60,7 +72,5 @@ export default {
         'el-button': [],
         'el-date-picker': []
     },
-    valueFormat: {
-
-    }
+    valueFormat: {}
 }

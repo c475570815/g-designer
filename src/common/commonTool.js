@@ -44,13 +44,15 @@ const handleConfigComponentData = (tagData) => {
         tagName,
         defaultContentName,
         defaultValueName,
-        isComponentName
+        isComponentName,
+        valueFiledName
     } = store.getters.getComponentConstValueKeyName
     //取值
     let componentTag = tagData[tagName];
     let isComponent = isEmpty(tagData[isComponentName]) ? true : tagData[isComponentName];
     let defaultContent = isEmpty(tagData[defaultContentName]) ? "" : tagData[defaultContentName];
     let defaultValue = isEmpty(tagData[defaultValueName]) ? "" : tagData[defaultValueName];
+    let valueFiled = isEmpty(tagData[valueFiledName]) ? "modelValue" : tagData[valueFiledName];
     //排除特殊约定的组件属性,剩下为组件自身属性
     let outPutKeyArr = Object.values(store.getters.getComponentConstValueKeyName)
     let keys = Object.keys(tagData);
@@ -60,9 +62,8 @@ const handleConfigComponentData = (tagData) => {
         if (outPutKeyArr.indexOf(key) < 0) {
             param[key] = tagData[key];
         }
-
     }
-    return {param, componentTag, defaultContent, defaultValue, isComponent};
+    return {param, componentTag, defaultContent, defaultValue, isComponent, valueFiled};
 }
 
 export default {

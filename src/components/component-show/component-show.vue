@@ -1,8 +1,9 @@
 <script>
 import {render, h, resolveComponent} from "vue";
-import {cloneDeep} from "lodash";
+import {cloneDeep, isEmpty} from "lodash";
 import {mapState} from "vuex";
 import bus from "@/bus";
+import {domPropertyValueFormat} from "@/common/dataFormat";
 
 export default {
   name: "component-show",
