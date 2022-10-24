@@ -1,6 +1,8 @@
 import {isEmpty} from "lodash";
 import common from "@/common/commonTool";
 
+const cssRegExp = new RegExp("(?<=\{).*(?=})")
+
 const toString = (value) => {
     return JSON.stringify(value);
 }
@@ -18,23 +20,23 @@ export const tagValueFormat = {
  * @type {{}}
  */
 export const designPropertyValueFormat = {
+
     style: (data) => {
         try {
             let res = data;
             if (common.isEmpty(data)) {
                 res = "";
             } else if (typeof data === 'object') {
+                //配置文件预制的
                 res = toString(data);
-                // res = res.replaceAll("{", "{\n");
-                // res = res.replaceAll("}", "\n}");
+                res = res.replaceAll("{", "{\n");
+                res = res.replaceAll("}", "\n}");
                 // res = res.replaceAll(";", ";\n");
-
-
-                res = res.replaceAll("{", "");
-                res = res.replaceAll("}", "");
                 res = res.replaceAll("\"", "");
             } else if (typeof res === 'string' && res.indexOf("{") < 0) {
-                // res = `{\n${res}\n}`
+                //从dom同步过来的
+                res = res.replaceAll(";", ";\n")
+                res = `{\n${res}\n\n}`
             }
             return res;
         } catch (e) {
@@ -49,10 +51,8 @@ export const domPropertyValueFormat = {
             if (common.isEmpty(data)) {
                 res = "";
             } else if (typeof res === 'string' && res.indexOf(":") > 0) {
-                res = res.replaceAll("{", "")
-                res = res.replaceAll("}", "")
                 res = res.replaceAll("\n", "")
-                res = res.replaceAll("\"", "")
+                res = cssRegExp.exec(res)[0]
             }
             return res;
         } catch (e) {

@@ -109,14 +109,14 @@ export default {
         console.error("错误的组件id");
       }
       this.dataArr[changeIndex].span = componentData.span;
-      // //格式化属性值
-      // let keyArr = Object.keys(componentData);
-      // for (let i = 0; i < keyArr.length; i++) {
-      //   let key = keyArr[i]
-      //   componentData[key] = Object.keys(domPropertyValueFormat).includes(key)
-      //       ? domPropertyValueFormat[key](componentData[key])
-      //       : componentData[key]
-      // }
+      //格式化属性值
+      let keyArr = Object.keys(componentData);
+      for (let i = 0; i < keyArr.length; i++) {
+        let key = keyArr[i]
+        componentData[key] = Object.keys(domPropertyValueFormat).includes(key)
+            ? domPropertyValueFormat[key](componentData[key])
+            : componentData[key]
+      }
       this.dataArr[changeIndex].componentData.code = componentData;
     })
 

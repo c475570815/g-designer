@@ -33,6 +33,8 @@ export default createStore({
             //当前编辑的组件数据
             componentData: {},
         },
+        activePanelId: 'default',
+        panelData: {}
     },
     // 获取数据并渲染
     getters: {
@@ -59,7 +61,16 @@ export default createStore({
         },
         setActiveEditComponentDataEmpty(state) {
             state.activeEditComponentData = {id: '', displayContainerId: '', componentData: undefined};
-        }
+        },
+        setActivePanelId(state, data) {
+            state.activePanelId = data;
+        },
+        changePanelDataById(state, {id, data}) {
+            state.panelData[id] = data;
+        },
+        addPanelData(state, id) {
+            state.panelData[id] = [];
+        },
     },
 // 数据的异步操作
     actions: {}

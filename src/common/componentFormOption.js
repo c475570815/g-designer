@@ -1,3 +1,5 @@
+import commonTool from "@/common/commonTool";
+
 export default {
     common: [
         {
@@ -22,20 +24,26 @@ export default {
             code: {
                 "valueFiledName": "value",
                 "componentTag": "Codemirror",
-                // "defaultValue": "{\n\n}",
+                "defaultValue": "{\n\n}",
                 options: {
                     mode: "text/css", // 语言模式
                     theme: "idea", // 主题
                     lineNumbers: true, // 显示行号
                     smartIndent: true, // 智能缩进
-                    indentUnit: 2, // 智能缩进单位为4个空格长度
+                    indentUnit: 0, // 智能缩进单位为4个空格长度
                     foldGutter: true, // 启用行槽中的代码折叠
                     styleActiveLine: true, // 显示选中行的样式
                     autofocus: true,
+                    indentWithTabs: true,
+                    matchBrackets: true,
                 },
-                // onCursorActivity: (codemirror) => {
-                //     codemirror.showHint();
-                // }
+                onKeypress: (codemirror, key) => {
+                    if (!commonTool.isEmpty(key)
+                        && key.keyCode > 48
+                        && key.keyCode < 112) {
+                        codemirror.showHint();
+                    }
+                }
             }
         }
     ],

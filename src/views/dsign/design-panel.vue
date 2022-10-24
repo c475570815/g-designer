@@ -3,8 +3,9 @@
     <draggable
         class="drawing-board"
         v-if="isDataArrEmpty"
+        :ref="`panel-${panelId}`"
         :id="panelId"
-        v-model="toolList"
+        v-model="componentDataArr"
         item-key="name"
         :group="displayComponentGroupName">
       <template #item="{element,index}">
@@ -18,6 +19,7 @@
 
     <draggable
         v-else
+        :ref="`panel-${panelId}`"
         :id="panelId"
         v-model="emptyArr"
         animation="300"
@@ -40,6 +42,8 @@ import componentShow from "@/components/component-show/component-show";
 import bus from "@/bus";
 import {mapState} from "vuex";
 import {domPropertyValueFormat} from "@/common/dataFormat";
+import {cloneDeep} from "lodash";
+import {computed, reactive} from "vue";
 
 export default {
   name: "design-panel",
@@ -49,44 +53,55 @@ export default {
   components: {componentShow, draggable},
   data() {
     return {
-      toolList: [],
-      // toolList: [{
-      //   "id": "9482e867-a94b-542a-6cc5-45a2b64cc8da",
-      //   "componentData": {
-      //     "id": "3-1",
-      //     "name": "行布局",
-      //     "type": "display",
-      //     "iconName": "folder",
-      //     "code": {
-      //       "componentTag": "component-show-row-display",
-      //       "gutter": 0,
-      //       "style": {"height": "70px"},
-      //       "id": "fdade588-2030-74ad-7df0-4a272e036197"
-      //     }
-      //   }
-      // }],
       emptyArr: [{text: "拖动布局控件到这里呢 亲"}]
     }
   },
+  // setup(props) {
+  //   const componentDataArr = reactive(computed(() => this.$store.state.panelData[props.panelId]))
+  //   return {
+  //     componentDataArr
+  //   }
+  // },
   computed: {
+    componentDataArr: function () {
+      return this.$store.state.panelData[this.$props.panelId]
+    },
     // 计算属性的 getter
     isDataArrEmpty: function () {
       // `this` 指向 vm 实例
-      return this.$common.isNotEmpty(this.toolList);
+      return this.$common.isNotEmpty(this.componentDataArr);
     },
     ...mapState({
       displayComponentGroupName: state => state.displayComponentGroupName
+
     })
   },
   methods: {
+    getComponentIndexById(id) {
+      let index = this.componentDataArr.findIndex(item => item.componentData.code.id === id);
+      if (index === -1) {
+        throw new TypeError("错误的组件id")
+      }
+      return index
+    },
+    alertComponentDataArr(tmpArr) {
+      this.$store.commit('changePanelDataById',
+          {
+            id: this.panelId,
+            data: tmpArr
+          }
+      )
+    },
     deleteComponent(idArr) {
+      let tmpArr = cloneDeep(this.componentDataArr);
       for (let id of idArr) {
-        let deleteIndex = this.toolList.findIndex(item => item.componentData.code.id === id);
+        let deleteIndex = this.getComponentIndexById(id);
         if (deleteIndex === -1) {
           continue;
         }
-        this.toolList.splice(deleteIndex, 1)
+        tmpArr.splice(deleteIndex, 1)
       }
+      this.alertComponentDataArr(tmpArr)
     }
   },
   mounted() {
@@ -100,27 +115,25 @@ export default {
         id: this.$common.getGuid(),
         componentData: componentData
       }
-      this.toolList.splice(displayIndex, 0, newShowComponent);
-
+      let tmpArr = cloneDeep(this.componentDataArr);
+      tmpArr.splice(displayIndex, 0, newShowComponent);
+      this.alertComponentDataArr(tmpArr)
       //修改布局型组件属性
       bus.$off(`changeComponent-${newShowComponent.id}`)
       bus.$on(`changeComponent-${newShowComponent.id}`, ({componentId, componentData}) => {
-        let changeIndex = this.toolList.findIndex((data) => {
-          return data.componentData.code.id === componentId;
-        });
-        if (changeIndex === -1) {
-          console.error("错误的组件id");
-        }
+        let changeIndex = this.getComponentIndexById(componentId);
         //格式化属性值
-        // let keyArr = Object.keys(componentData);
-        // for (let i = 0; i < keyArr.length; i++) {
-        //   let key = keyArr[i]
-        //   componentData[key] = Object.keys(domPropertyValueFormat).includes(key)
-        //       ? domPropertyValueFormat[key](componentData[key])
-        //       : componentData[key]
-        // }
-        this.toolList[changeIndex].span = componentData.span;
-        this.toolList[changeIndex].componentData.code = componentData;
+        let keyArr = Object.keys(componentData);
+        for (let i = 0; i < keyArr.length; i++) {
+          let key = keyArr[i]
+          componentData[key] = Object.keys(domPropertyValueFormat).includes(key)
+              ? domPropertyValueFormat[key](componentData[key])
+              : componentData[key]
+        }
+        let tmpArr = cloneDeep(this.componentDataArr);
+        tmpArr[changeIndex].span = componentData.span;
+        tmpArr[changeIndex].componentData.code = componentData;
+        this.alertComponentDataArr(tmpArr);
       })
     })
   }
